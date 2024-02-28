@@ -183,7 +183,7 @@ namespace MVC_2.Controllers
                 string query = "UPDATE Scarpe SET Attivo = 0 WHERE IdScarpa = @IdScarpa";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@IdScarpa", s.IdScarpa);
+                cmd.Parameters.AddWithValue("@IdScarpa", id);
 
                 cmd.ExecuteNonQuery();
             }
