@@ -1,4 +1,6 @@
-﻿namespace MVC_2.Models
+﻿using System.Collections.Generic;
+
+namespace MVC_2.Models
 {
     public class Scarpa
     {
@@ -9,6 +11,8 @@
         public string ImmagineCopertina { get; set; }
         public string ImmagineNome { get; set; }
         public bool Attivo { get; set; }
+
+        public List<ImmagineXtra> ListaImmagini = new List<ImmagineXtra>();
 
     }
 }

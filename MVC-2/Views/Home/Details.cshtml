@@ -1,0 +1,63 @@
+﻿@model MVC_2.Models.Scarpa
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.IdScarpa)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Nome)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Descrizione)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Prezzo)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Attivo)
+        </th>
+        <th></th>
+    </tr>
+
+
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => Model.IdScarpa)
+            <img class="imgThumbnail" src="@Url.Content(Model.ImmagineCopertina)" />
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => Model.Nome)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => Model.Descrizione)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => Model.Prezzo)
+        </td>
+        
+        <td>
+            @Html.DisplayFor(modelItem => Model.Attivo)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+            @Html.ActionLink("Delete", "Delete", new {  id=Model.IdScarpa  })
+        </td>
+    </tr>
+</table>
+
+    @foreach(var item in Model.ListaImmagini)
+            {
+                <img src="@Url.Content(item.PercorsoImmagine)"/>
+            }
+
+

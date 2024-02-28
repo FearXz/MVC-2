@@ -9,43 +9,26 @@
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.IdScarpa)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Nome)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Descrizione)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Prezzo)
-        </th>
-        <th></th>
-    </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            <img src="@Url.Content(item.ImmagineCopertina + item.ImmagineNome)" class="imgThumbnail" />
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Nome)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Descrizione)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Prezzo)
-        </td>
-        <td>
-            @*@Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |*@
-            @Html.ActionLink("Details", "Details", new {  id=item.IdScarpa  }) @*|*@
-            @* @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })*@
-        </td>
-    </tr>
-}
+    <div class="row row-cols-4">
+        @foreach (var prodotto  in Model)
+        {
+            <div class="col">
 
-</table>
+                <div class="card">
+                    <img class="card-img-top imgThumbnail" src="@Url.Content(prodotto.ImmagineCopertina)" />
+                    <div class="card-body">
+                        <p class="card-text mb-0">@prodotto.Nome</p>
+                        <p class="card-text font-monospace">@prodotto.Prezzo</p>
+                        @Html.ActionLink("Details", "Details", new { id = prodotto.IdScarpa })
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+                @*@Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |*@
+               @*@Html.ActionLink("Details", "Home", new { id = item.IdScarpa }) @*|*@
+                @* @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })*@
+
+
