@@ -94,39 +94,40 @@
     @if (utente != null && utente.TipoUtente)
     {
         <script>
-    $(document).ready(function () {
+        $(document).ready(async function () {
 
-        $(".xtra").click(function () {
-        $(".xtra").removeClass("selected");
-        $(this).addClass("selected");
-        });
+            $(".xtra").click(function () {
+                $(".xtra").removeClass("selected");
+                $(this).addClass("selected");
+            });
 
-        $("#buttonChangeImg").click(function(){
-            let idScarpa = @Model.IdScarpa;
-            let nuovaImmagineCopertina = $(".selected").attr("src");
-            console.log(nuovaImmagineCopertina);
+            $("#buttonChangeImg").click(async function () {
+                let idScarpa = @Model.IdScarpa;
+                let nuovaImmagineCopertina = $(".selected").attr("src");
+                console.log(nuovaImmagineCopertina);
 
-            fetch('/Home/UpdateCoverImage', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    idScarpa: idScarpa,
-                    nuovaImmagineCopertina: nuovaImmagineCopertina
-                }),
-            })
-                .then(response => response.json())
-                .then(data => {
-                    console.log(data)
+                try {
+                    const response = await fetch('/Home/UpdateCoverImage', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            idScarpa: idScarpa,
+                            nuovaImmagineCopertina: nuovaImmagineCopertina
+                        }),
+                    });
+
+                    const data = await response.json();
+                    console.log(data);
+
                     if (data) {
                         $("#mainImg").attr("src", nuovaImmagineCopertina);
                     }
-                })
-                .catch((error) => {
+                } catch (error) {
                     console.error('Error:', error);
-                });
-        })
+                }
+            });
 
         });
         </script>
