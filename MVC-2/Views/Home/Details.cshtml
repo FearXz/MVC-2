@@ -1,14 +1,35 @@
 ﻿@model MVC_2.Models.Scarpa
+@using MVC_2.Models;
 
 @{
     ViewBag.Title = "Details";
+    var utente = Session["Utente"] as Utente;
 }
 
 <h2>Details</h2>
+@if (utente != null && utente.TipoUtente)
+{
+    using (Html.BeginForm("Details", "Home", new { productId = Model.IdScarpa }, FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
+        <div class="form-horizontal">
+            <h4>Aggiungi Immagine</h4>
+            <div class="form-group">
+                <div class="col-md-10">
+                    <input type="file" name="ImmagineXtra" class="form-control" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Add Img" class="btn btn-primary" />
+                </div>
+            </div>
+        </div>
+    }
+}
+
 <table class="table">
     <tr>
         <th>
@@ -23,12 +44,8 @@
         <th>
             @Html.DisplayNameFor(model => model.Prezzo)
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Attivo)
-        </th>
         <th></th>
     </tr>
-
 
     <tr>
         <td>
@@ -44,20 +61,26 @@
         <td>
             @Html.DisplayFor(modelItem => Model.Prezzo)
         </td>
-        
-        <td>
-            @Html.DisplayFor(modelItem => Model.Attivo)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-            @Html.ActionLink("Delete", "Delete", new {  id=Model.IdScarpa  })
-        </td>
-    </tr>
+        @if (utente != null && utente.TipoUtente)
+        {
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = Model.IdScarpa }) |
+                @Html.ActionLink("Delete", "Delete", new { id = Model.IdScarpa })
+            </td>
+        }
+        </tr>
 </table>
-
-    @foreach(var item in Model.ListaImmagini)
+<div class="row flex-wrap">
+    @foreach (var item in Model.ListaImmagini)
+    {
+        <div class="col-auto">
+            <img src="@Url.Content(item.PercorsoImmagine)" class="imgThumbnail" />
+            @if (utente != null && utente.TipoUtente)
             {
-                <img src="@Url.Content(item.PercorsoImmagine)"/>
+                <p>
+                    @Html.ActionLink("Delete", "DeleteImgExtra", new { id = item.IdImmagine, productId = Model.IdScarpa })
+                </p>
             }
-
-
+            </div>
+    }
+</div>

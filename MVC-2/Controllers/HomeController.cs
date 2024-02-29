@@ -116,6 +116,47 @@ namespace MVC_2.Controllers
 
             return View(s);
         }
+        [HttpPost]
+        public ActionResult Details(int? productId, HttpPostedFileBase ImmagineXtra)
+        {
+            if (ImmagineXtra != null)
+            {
+
+                var fileName = Path.GetFileName(ImmagineXtra.FileName);
+                var path = Path.Combine("~/Content/Img", fileName);
+                var absolutePath = Server.MapPath(path);
+                ImmagineXtra.SaveAs(absolutePath);
+
+                string connectionString = ConfigurationManager.ConnectionStrings["MyDb"].ToString();
+                SqlConnection conn = new SqlConnection(connectionString);
+
+                try
+                {
+                    conn.Open();
+
+                    string query = "INSERT INTO ImmaginiXtra (idScarpa,PercorsoImmagine) VALUES (@idScarpe, @PercorsoImmagine)";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@idScarpe", productId);
+                    cmd.Parameters.AddWithValue("@PercorsoImmagine", path);
+
+                    cmd.ExecuteNonQuery();
+
+                }
+                catch (Exception ex)
+                {
+                    Response.Write($"Errore durante il recupero dei dati: {ex.Message}");
+                }
+                finally
+                {
+                    conn.Close();
+                }
+            }
+            else
+            {
+                Response.Write("Errore durante il caricamento dell'immagine");
+            }
+            return RedirectToAction("Details", new { id = productId });
+        }
 
         public ActionResult CreateProduct()
         {
@@ -196,7 +237,154 @@ namespace MVC_2.Controllers
                 conn.Close();
             }
 
-            return View();
+            return RedirectToAction("Index");
         }
+
+        public ActionResult DeleteImgExtra(int id, int productId)
+        {
+            string connectionString = ConfigurationManager.ConnectionStrings["MyDb"].ToString();
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    string query = "DELETE FROM ImmaginiXtra WHERE IdImmagine = @IdImmagine";
+
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@IdImmagine", id);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Response.Write($"Errore durante il recupero dei dati: {ex.Message}");
+            }
+
+            return RedirectToAction("Details", new { id = productId });
+        }
+
+        public ActionResult Edit(int? id)
+        {
+            if (id == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            string connectionString = ConfigurationManager.ConnectionStrings["MyDb"].ToString();
+            SqlConnection conn = new SqlConnection(connectionString);
+            Scarpa s = new Scarpa();
+
+            try
+            {
+                conn.Open();
+
+                string query = "SELECT * FROM Scarpe WHERE Attivo=1 AND IdScarpa = @IdScarpe";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@IdScarpe", id);
+
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    s.IdScarpa = Convert.ToInt32(reader["IdScarpa"]);
+                    s.Nome = reader["Nome"].ToString();
+                    s.Descrizione = reader["Descrizione"].ToString();
+                    s.Prezzo = Convert.ToDecimal(reader["Prezzo"]);
+                    s.ImmagineCopertina = reader["ImmagineCopertina"].ToString();
+
+                }
+                reader.Close();
+            }
+            catch (Exception ex)
+            {
+                Response.Write($"Errore durante il recupero dei dati: {ex.Message}");
+            }
+            finally
+            {
+                conn.Close();
+            }
+
+            return View(s);
+        }
+        [HttpPost]
+        public ActionResult Edit(Scarpa s, int productId, HttpPostedFileBase ImmagineCopertina)
+        {
+            if (ImmagineCopertina != null)
+            {
+
+                var fileName = Path.GetFileName(ImmagineCopertina.FileName);
+                var path = Path.Combine("~/Content/Img", fileName);
+                var absolutePath = Server.MapPath(path);
+                ImmagineCopertina.SaveAs(absolutePath);
+
+                string connectionString = ConfigurationManager.ConnectionStrings["MyDb"].ToString();
+                SqlConnection conn = new SqlConnection(connectionString);
+
+                try
+                {
+                    conn.Open();
+
+                    string query = "UPDATE Scarpe SET Nome = @Nome, Descrizione = @Descrizione, Prezzo = @Prezzo, ImmagineCopertina = @ImmagineCopertina WHERE IdScarpa = @IdScarpa";
+
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@Nome", s.Nome);
+                    cmd.Parameters.AddWithValue("@Descrizione", s.Descrizione);
+                    cmd.Parameters.AddWithValue("@Prezzo", s.Prezzo);
+                    cmd.Parameters.AddWithValue("@ImmagineCopertina", path);
+                    cmd.Parameters.AddWithValue("@IdScarpa", productId);
+
+                    cmd.ExecuteNonQuery();
+
+                }
+                catch (Exception ex)
+                {
+                    Response.Write($"Errore durante il recupero dei dati: {ex.Message}");
+                }
+                finally
+                {
+                    conn.Close();
+                }
+            }
+            else if (ImmagineCopertina == null)
+            {
+                string connectionString = ConfigurationManager.ConnectionStrings["MyDb"].ToString();
+                SqlConnection conn = new SqlConnection(connectionString);
+
+                try
+                {
+                    conn.Open();
+
+                    string query = "UPDATE Scarpe SET Nome = @Nome, Descrizione = @Descrizione, Prezzo = @Prezzo WHERE IdScarpa = @IdScarpa";
+
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@Nome", s.Nome);
+                    cmd.Parameters.AddWithValue("@Descrizione", s.Descrizione);
+                    cmd.Parameters.AddWithValue("@Prezzo", s.Prezzo);
+                    cmd.Parameters.AddWithValue("@IdScarpa", productId);
+
+                    cmd.ExecuteNonQuery();
+
+                }
+                catch (Exception ex)
+                {
+                    Response.Write($"Errore durante il recupero dei dati: {ex.Message}");
+                }
+                finally
+                {
+                    conn.Close();
+                }
+            }
+            else
+            {
+                Response.Write("Errore durante il caricamento dell'immagine");
+            }
+            return RedirectToAction("Edit", new { id = productId });
+        }
+
     }
 }

@@ -1,7 +1,12 @@
-﻿<!DOCTYPE html>
+﻿@using MVC_2.Models;
+
+@{
+    var utente = Session["Utente"] as Utente;
+}
+<!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - Applicazione ASP.NET</title>
@@ -18,10 +23,28 @@
             </button>
             <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
                 <ul class="navbar-nav flex-grow-1">
-                    <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("Informazioni", "About", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("Contatto", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+                    @{
+                        if (utente != null && utente.TipoUtente)
+                        {
+                            <li>@Html.ActionLink("CreateProduct", "CreateProduct", new { area = "" }, new { @class = "nav-link" })</li>
+                        }
+                    }
                 </ul>
+                <div class="text-white">
+                    @{
+
+                        if (utente != null)
+                        {
+                            <text>@utente.Username</text>
+                            @Html.ActionLink("Logut", "Logout", "User", new { area = "" }, new { @class = "nav-link" })
+                        }
+                        else
+                        {
+
+                            @Html.ActionLink("Login", "Login", "User", new { area = "" }, new { @class = "nav-link" })
+                        }
+                    }
+                </div>
             </div>
         </div>
     </nav>
