@@ -24,3 +24,6 @@ img.imgThumbnail {
     max-width: 250px;
     max-height: 200px
 }
+.selected {
+    border: 2px solid red;
+}

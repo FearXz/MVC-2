@@ -386,5 +386,36 @@ namespace MVC_2.Controllers
             return RedirectToAction("Edit", new { id = productId });
         }
 
+        [HttpPost]
+        public JsonResult UpdateCoverImage(int idScarpa, string nuovaImmagineCopertina)
+        {
+            string connectionString = ConfigurationManager.ConnectionStrings["MyDb"].ToString();
+            SqlConnection conn = new SqlConnection(connectionString);
+
+            try
+            {
+                conn.Open();
+
+                string query = "UPDATE Scarpe SET ImmagineCopertina = @ImmagineCopertina WHERE IdScarpa = @IdScarpa";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@ImmagineCopertina", nuovaImmagineCopertina);
+                cmd.Parameters.AddWithValue("@IdScarpa", idScarpa);
+
+                cmd.ExecuteNonQuery();
+
+                return Json(new { success = true, message = "Immagine copertina aggiornata con successo" }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Errore durante l'aggiornamento dell'immagine copertina: {ex.Message}" }, JsonRequestBehavior.AllowGet);
+            }
+            finally
+            {
+                conn.Close();
+            }
+        }
+
+
     }
 }

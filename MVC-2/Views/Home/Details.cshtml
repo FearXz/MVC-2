@@ -50,7 +50,7 @@
     <tr>
         <td>
             @Html.DisplayFor(modelItem => Model.IdScarpa)
-            <img class="imgThumbnail" src="@Url.Content(Model.ImmagineCopertina)" />
+            <img id="mainImg" class="imgThumbnail" src="@Url.Content(Model.ImmagineCopertina)" />
         </td>
         <td>
             @Html.DisplayFor(modelItem => Model.Nome)
@@ -68,19 +68,67 @@
                 @Html.ActionLink("Delete", "Delete", new { id = Model.IdScarpa })
             </td>
         }
-        </tr>
+    </tr>
 </table>
 <div class="row flex-wrap">
     @foreach (var item in Model.ListaImmagini)
     {
         <div class="col-auto">
-            <img src="@Url.Content(item.PercorsoImmagine)" class="imgThumbnail" />
+            <img src="@Url.Content(item.PercorsoImmagine)" class="imgThumbnail xtra" />
             @if (utente != null && utente.TipoUtente)
             {
                 <p>
                     @Html.ActionLink("Delete", "DeleteImgExtra", new { id = item.IdImmagine, productId = Model.IdScarpa })
                 </p>
             }
-            </div>
+        </div>
     }
 </div>
+@if (utente != null && utente.TipoUtente)
+{
+    <button id="buttonChangeImg" class="btn btn-primary">Set Default</button>
+}
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    @if (utente != null && utente.TipoUtente)
+    {
+        <script>
+    $(document).ready(function () {
+
+        $(".xtra").click(function () {
+        $(".xtra").removeClass("selected");
+        $(this).addClass("selected");
+        });
+
+        $("#buttonChangeImg").click(function(){
+            let idScarpa = @Model.IdScarpa;
+            let nuovaImmagineCopertina = $(".selected").attr("src");
+            console.log(nuovaImmagineCopertina);
+
+            fetch('/Home/UpdateCoverImage', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    idScarpa: idScarpa,
+                    nuovaImmagineCopertina: nuovaImmagineCopertina
+                }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data)
+                    if (data) {
+                        $("#mainImg").attr("src", nuovaImmagineCopertina);
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        })
+
+        });
+        </script>
+    }
+}
